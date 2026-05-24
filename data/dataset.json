@@ -1,0 +1,302 @@
+[
+  {
+    "id": 1,
+    "title": "AI-Powered Resume Screener",
+    "description": "An automated tool that uses NLP to screen and rank resumes against job descriptions, reducing recruiter workload by 70%.",
+    "tags": ["AI", "HR-tech", "automation", "NLP"],
+    "problems": ["Manual resume screening is slow", "Bias in hiring", "Inconsistent evaluation criteria"],
+    "category": "product_idea",
+    "source_type": "startup_pitch",
+    "notes": "Multiple startups in this space. Differentiation through transparency and explainability."
+  },
+  {
+    "id": 2,
+    "title": "Subscription Fatigue Among Consumers",
+    "description": "Users are overwhelmed by the number of subscriptions they manage. Average consumer has 12+ active subscriptions, leading to cancellation waves.",
+    "tags": ["consumer", "subscription", "fintech", "UX"],
+    "problems": ["Too many subscriptions", "Forgotten charges", "Difficult cancellation flows"],
+    "category": "user_complaint",
+    "source_type": "survey_data",
+    "notes": "Opportunity for subscription management or bundling tools."
+  },
+  {
+    "id": 3,
+    "title": "Rise of Vertical SaaS",
+    "description": "Industry-specific SaaS solutions are outperforming horizontal tools. Verticals like legal-tech, construction-tech, and agri-tech are seeing 3x growth.",
+    "tags": ["SaaS", "vertical", "market-trend", "B2B"],
+    "problems": ["Horizontal tools are too generic", "Industry workflows need specialization"],
+    "category": "market_trend",
+    "source_type": "industry_report",
+    "notes": "Best entry points are underserved industries with manual processes."
+  },
+  {
+    "id": 4,
+    "title": "Quibi's Failure in Short-Form Video",
+    "description": "Quibi raised $1.75B but shut down in 6 months. Failed due to wrong assumptions about mobile-first premium content and lack of social sharing.",
+    "tags": ["video", "mobile", "content", "failure"],
+    "problems": ["No social/viral loop", "Competed with free content", "Wrong format assumptions"],
+    "category": "startup_failure",
+    "source_type": "case_study",
+    "notes": "Key lesson: distribution and social mechanics matter more than content quality alone."
+  },
+  {
+    "id": 5,
+    "title": "Complex Onboarding Kills Retention",
+    "description": "Apps with more than 5 onboarding steps see 60% drop-off. Users expect to reach value within 30 seconds.",
+    "tags": ["UX", "onboarding", "retention", "mobile"],
+    "problems": ["Long onboarding flows", "Delayed time-to-value", "Feature overload at start"],
+    "category": "ux_frustration",
+    "source_type": "ux_research",
+    "notes": "Progressive disclosure and smart defaults are the fix."
+  },
+  {
+    "id": 6,
+    "title": "Developer Tools Market Explosion",
+    "description": "The developer tools market is projected to reach $45B by 2028. API-first products, CI/CD, and observability tools lead growth.",
+    "tags": ["dev-tools", "API", "infrastructure", "B2B"],
+    "problems": ["Toolchain complexity", "Integration fatigue", "Vendor lock-in"],
+    "category": "market_trend",
+    "source_type": "market_analysis",
+    "notes": "Best opportunity: tools that reduce complexity rather than add features."
+  },
+  {
+    "id": 7,
+    "title": "Theranos and the Danger of Hype",
+    "description": "Theranos claimed revolutionary blood testing but lacked working technology. Raised $700M on storytelling alone before collapse.",
+    "tags": ["health-tech", "fraud", "failure", "deep-tech"],
+    "problems": ["Technology didn't work", "No peer validation", "Regulatory evasion"],
+    "category": "startup_failure",
+    "source_type": "case_study",
+    "notes": "Key lesson: technical feasibility must be validated before scaling."
+  },
+  {
+    "id": 8,
+    "title": "AI Writing Assistants Commoditization",
+    "description": "With GPT wrappers flooding the market, AI writing tools are becoming commoditized. Differentiation now requires deep workflow integration.",
+    "tags": ["AI", "writing", "commoditization", "SaaS"],
+    "problems": ["Low switching costs", "Feature parity across tools", "Race to bottom on pricing"],
+    "category": "opportunity_signal",
+    "source_type": "market_analysis",
+    "notes": "Winners will integrate into existing workflows (email, docs, CRM) rather than being standalone."
+  },
+  {
+    "id": 9,
+    "title": "Mental Health App Engagement Problem",
+    "description": "Mental health apps see 95% churn within 30 days. Users download during crisis but don't build habits around digital interventions.",
+    "tags": ["health-tech", "mental-health", "retention", "consumer"],
+    "problems": ["Crisis-driven downloads", "No habit formation", "Stigma around tracking"],
+    "category": "user_complaint",
+    "source_type": "research_paper",
+    "notes": "Opportunity in passive monitoring and employer/insurance-backed models."
+  },
+  {
+    "id": 10,
+    "title": "No-Code Platform Limitations",
+    "description": "No-code tools hit walls at scale. Users outgrow platforms and face painful migrations when they need custom logic or integrations.",
+    "tags": ["no-code", "platform", "scalability", "developer"],
+    "problems": ["Scalability ceiling", "Vendor lock-in", "Limited customization"],
+    "category": "ux_frustration",
+    "source_type": "user_interviews",
+    "notes": "Hybrid low-code/pro-code approaches are emerging as the answer."
+  },
+  {
+    "id": 11,
+    "title": "Personalized Learning Platforms",
+    "description": "Adaptive learning systems that adjust content difficulty and pace based on student performance show 40% better outcomes than static curricula.",
+    "tags": ["ed-tech", "AI", "personalization", "consumer"],
+    "problems": ["One-size-fits-all education", "Student disengagement", "Teacher burnout"],
+    "category": "product_idea",
+    "source_type": "research_paper",
+    "notes": "Key challenge: content creation at scale for personalization."
+  },
+  {
+    "id": 12,
+    "title": "API Economy Growth",
+    "description": "Companies exposing APIs as products are growing 38% faster. API-first business models create network effects and ecosystem lock-in.",
+    "tags": ["API", "platform", "B2B", "developer"],
+    "problems": ["Integration complexity", "Documentation quality", "Rate limiting frustrations"],
+    "category": "market_trend",
+    "source_type": "industry_report",
+    "notes": "Stripe, Twilio, and Plaid are the gold standard examples."
+  },
+  {
+    "id": 13,
+    "title": "Local Commerce Digitization Gap",
+    "description": "70% of local businesses still lack proper digital presence. Simple tools for booking, payments, and customer management are underbuilt.",
+    "tags": ["SMB", "local", "fintech", "commerce"],
+    "problems": ["Tech intimidation", "High platform fees", "Fragmented tools"],
+    "category": "opportunity_signal",
+    "source_type": "market_analysis",
+    "notes": "WhatsApp-based commerce is winning in emerging markets."
+  },
+  {
+    "id": 14,
+    "title": "Juicero Over-Engineering Failure",
+    "description": "Juicero built a $400 juice press that squeezed pre-packaged bags. Users discovered they could squeeze bags by hand. Company shut down.",
+    "tags": ["hardware", "consumer", "failure", "over-engineering"],
+    "problems": ["Solution looking for a problem", "Overpriced for value", "No real moat"],
+    "category": "startup_failure",
+    "source_type": "case_study",
+    "notes": "Key lesson: validate that the problem needs a technical solution."
+  },
+  {
+    "id": 15,
+    "title": "Data Privacy as a Feature",
+    "description": "Post-GDPR consumers increasingly choose privacy-respecting products. Privacy-first positioning is becoming a genuine competitive advantage.",
+    "tags": ["privacy", "security", "consumer", "regulation"],
+    "problems": ["Data breaches erode trust", "Complex privacy policies", "Surveillance capitalism fatigue"],
+    "category": "market_trend",
+    "source_type": "survey_data",
+    "notes": "Apple's privacy marketing has raised consumer expectations across all products."
+  },
+  {
+    "id": 16,
+    "title": "Freelancer Payment Delays",
+    "description": "Average freelancer waits 45 days for payment. 30% report it as their top business stress. Invoice tracking and collection are manual.",
+    "tags": ["fintech", "freelance", "payments", "gig-economy"],
+    "problems": ["Late payments", "Manual invoicing", "Cash flow unpredictability"],
+    "category": "user_complaint",
+    "source_type": "survey_data",
+    "notes": "Opportunity for instant payout or invoice factoring for freelancers."
+  },
+  {
+    "id": 17,
+    "title": "Collaborative Design Tool Evolution",
+    "description": "Figma's success proved that real-time collaboration is table stakes. Next wave will integrate design, code, and content in one tool.",
+    "tags": ["design", "collaboration", "SaaS", "developer"],
+    "problems": ["Design-to-code handoff", "Version control for design", "Stakeholder feedback loops"],
+    "category": "opportunity_signal",
+    "source_type": "market_analysis",
+    "notes": "Convergence of design and development tools is inevitable."
+  },
+  {
+    "id": 18,
+    "title": "Food Delivery Unit Economics Crisis",
+    "description": "Most food delivery platforms lose money per order. High customer acquisition costs and driver subsidies make profitability elusive.",
+    "tags": ["food-tech", "delivery", "marketplace", "unit-economics"],
+    "problems": ["Negative unit economics", "Driver exploitation", "Restaurant margin squeeze"],
+    "category": "startup_failure",
+    "source_type": "financial_analysis",
+    "notes": "Profitable models require either premium positioning or vertical integration."
+  },
+  {
+    "id": 19,
+    "title": "Remote Work Tool Consolidation",
+    "description": "Teams use 12+ tools for remote work. Consolidation toward all-in-one platforms is accelerating, but integration quality varies.",
+    "tags": ["remote-work", "SaaS", "productivity", "B2B"],
+    "problems": ["Tool switching fatigue", "Context loss between apps", "Meeting overload"],
+    "category": "opportunity_signal",
+    "source_type": "user_interviews",
+    "notes": "Winners will own the 'work OS' layer, not individual features."
+  },
+  {
+    "id": 20,
+    "title": "Climate Tech Investment Surge",
+    "description": "Climate tech funding reached $70B in 2024. Carbon accounting, energy management, and supply chain sustainability are the hottest areas.",
+    "tags": ["climate", "sustainability", "B2B", "deep-tech"],
+    "problems": ["Greenwashing concerns", "Complex measurement", "Regulatory uncertainty"],
+    "category": "market_trend",
+    "source_type": "industry_report",
+    "notes": "B2B compliance tools have clearer paths to revenue than consumer climate apps."
+  },
+  {
+    "id": 21,
+    "title": "Social Commerce in Gen Z",
+    "description": "Gen Z discovers and buys products directly through social media. TikTok Shop and Instagram Checkout are becoming primary shopping channels.",
+    "tags": ["social", "commerce", "Gen-Z", "consumer"],
+    "problems": ["Trust in influencer recommendations", "Returns and quality issues", "Impulse buying regret"],
+    "category": "market_trend",
+    "source_type": "survey_data",
+    "notes": "Authenticity and community-driven curation are key differentiators."
+  },
+  {
+    "id": 22,
+    "title": "Wearable Health Data Silos",
+    "description": "Health data from wearables is locked in proprietary ecosystems. Users can't easily share data across providers or get holistic health views.",
+    "tags": ["health-tech", "wearables", "data", "interoperability"],
+    "problems": ["Data portability", "Fragmented health records", "No unified dashboard"],
+    "category": "ux_frustration",
+    "source_type": "user_interviews",
+    "notes": "FHIR and open health APIs are enabling interoperability slowly."
+  },
+  {
+    "id": 23,
+    "title": "AI Customer Support Backlash",
+    "description": "Users increasingly frustrated with AI chatbots replacing human support. 78% prefer human agents for complex issues.",
+    "tags": ["AI", "customer-support", "UX", "consumer"],
+    "problems": ["Chatbot loops", "No escalation path", "Impersonal interactions"],
+    "category": "user_complaint",
+    "source_type": "survey_data",
+    "notes": "Hybrid AI+human models with transparent handoff work best."
+  },
+  {
+    "id": 24,
+    "title": "Micro-SaaS as a Business Model",
+    "description": "Solo developers building focused SaaS tools for niche audiences. Low overhead, high margins, and bootstrappable.",
+    "tags": ["SaaS", "indie", "bootstrapping", "micro"],
+    "problems": ["Limited growth ceiling", "Solo founder burnout", "Customer concentration risk"],
+    "category": "opportunity_signal",
+    "source_type": "market_analysis",
+    "notes": "Best for solving specific pain points in professional workflows."
+  },
+  {
+    "id": 25,
+    "title": "Enterprise AI Adoption Barriers",
+    "description": "Only 23% of enterprise AI projects make it to production. Key blockers: data quality, lack of ML ops, and unclear ROI measurement.",
+    "tags": ["AI", "enterprise", "MLOps", "B2B"],
+    "problems": ["Poor data quality", "No MLOps pipeline", "Executive skepticism", "Compliance concerns"],
+    "category": "market_trend",
+    "source_type": "industry_report",
+    "notes": "Tools that simplify deployment and ROI tracking have large TAM."
+  },
+  {
+    "id": 26,
+    "title": "Creator Economy Monetization Challenges",
+    "description": "Only 4% of creators earn more than $100K/year. Most rely on brand deals with unpredictable income. Direct monetization tools are underdeveloped.",
+    "tags": ["creator", "monetization", "consumer", "platform"],
+    "problems": ["Income volatility", "Platform dependency", "Audience ownership"],
+    "category": "user_complaint",
+    "source_type": "survey_data",
+    "notes": "Substack and Patreon showed the way, but most verticals remain underserved."
+  },
+  {
+    "id": 27,
+    "title": "Compliance Automation for Startups",
+    "description": "Early-stage startups spend 15% of time on compliance tasks. SOC2, GDPR, and HIPAA readiness tools can save months of work.",
+    "tags": ["compliance", "legal-tech", "B2B", "automation"],
+    "problems": ["Manual compliance processes", "Expensive consultants", "Changing regulations"],
+    "category": "product_idea",
+    "source_type": "user_interviews",
+    "notes": "Vanta and Drata proved the market. Still room for vertical-specific compliance."
+  },
+  {
+    "id": 28,
+    "title": "Voice Interface Adoption Stalling",
+    "description": "After initial excitement, voice assistants plateau in utility. Users default to voice for timers and music, not complex tasks.",
+    "tags": ["voice", "AI", "UX", "consumer"],
+    "problems": ["Limited use cases", "Privacy concerns", "Accuracy issues in noisy environments"],
+    "category": "ux_frustration",
+    "source_type": "ux_research",
+    "notes": "Voice works best as a complement to visual UI, not a replacement."
+  },
+  {
+    "id": 29,
+    "title": "B2B Marketplace Opportunity",
+    "description": "B2B marketplaces are following B2C playbook with 10-year delay. Procurement, raw materials, and professional services are ripe for disruption.",
+    "tags": ["marketplace", "B2B", "procurement", "platform"],
+    "problems": ["Manual procurement", "Opaque pricing", "Long sales cycles"],
+    "category": "opportunity_signal",
+    "source_type": "market_analysis",
+    "notes": "Trust, quality verification, and credit terms are key differentiators vs B2C."
+  },
+  {
+    "id": 30,
+    "title": "Notion's Success Through Flexibility",
+    "description": "Notion grew by being an all-in-one workspace. Its block-based architecture lets users build custom workflows without code.",
+    "tags": ["productivity", "no-code", "SaaS", "consumer"],
+    "problems": ["Too flexible can mean slow", "Performance at scale", "Learning curve"],
+    "category": "product_idea",
+    "source_type": "case_study",
+    "notes": "Template marketplace and community-driven growth were key acquisition channels."
+  }
+]

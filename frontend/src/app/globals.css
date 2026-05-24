@@ -1,0 +1,189 @@
+/* ═══════════════════════════════════════════════════════════════
+   CortexFlow — Neo-Brutalist Design System
+   Super-saturated primaries, high-contrast flat fills,
+   thick borders, and hard geometric shadows.
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Space+Grotesk:wght@300..700&display=swap');
+
+/* ── CSS Custom Properties ─────────────────────────────────────── */
+:root {
+  /* Core palette */
+  --bg-primary: #f4f4f5;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e4e4e7;
+  --bg-card: #ffffff;
+
+  /* Accent colors */
+  --accent-primary: #facc15;     /* Vibrant Yellow */
+  --accent-secondary: #8b5cf6;   /* Deep Purple */
+  --accent-tertiary: #f87171;    /* Coral */
+  --accent-info: #3b82f6;        /* Electric Blue */
+  --accent-success: #10b981;     /* Emerald Green */
+  --accent-danger: #ba1a1a;      /* Deep Red */
+
+  /* Neutral & Text */
+  --neutral-black: #000000;
+  --text-primary: #000000;
+  --text-secondary: #27272a;
+  --text-muted: #52525b;
+
+  /* Borders */
+  --border-width: 4px;
+  --border-width-sm: 2px;
+  --border-color: #000000;
+  
+  /* Shadows */
+  --shadow-brutalist: 4px 4px 0px 0px #000000;
+  --shadow-brutalist-lg: 8px 8px 0px 0px #000000;
+  
+  /* Border Radius */
+  --radius-sm: 0.25rem;   /* 4px */
+  --radius-md: 0.5rem;    /* 8px */
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.5rem;    /* 24px */
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 100ms ease;
+  --transition-base: 200ms ease;
+}
+
+/* ── Reset & Base ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Typography ────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Anybody', sans-serif;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--neutral-black);
+}
+
+h1 { font-size: 3.5rem; }
+h2 { font-size: 2.25rem; }
+h3 { font-size: 1.5rem; }
+
+code, pre {
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 500;
+}
+
+a {
+  color: var(--accent-secondary);
+  text-decoration: underline;
+  font-weight: 700;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--neutral-black);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-left: var(--border-width) solid var(--neutral-black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border: var(--border-width-sm) solid var(--neutral-black);
+  border-radius: var(--radius-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
+}
+
+/* ── Animations ────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Neo-Brutalist Common Elements ──────────────────────────────── */
+.brutalist-card {
+  background: var(--bg-card);
+  border: var(--border-width) solid var(--neutral-black);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-brutalist-lg);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.brutalist-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: var(--accent-primary);
+  color: var(--neutral-black);
+  border: var(--border-width) solid var(--neutral-black);
+  border-radius: var(--radius-lg);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-brutalist);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.brutalist-btn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px var(--neutral-black);
+}
+
+.brutalist-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px var(--neutral-black);
+}
+
+.brutalist-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}

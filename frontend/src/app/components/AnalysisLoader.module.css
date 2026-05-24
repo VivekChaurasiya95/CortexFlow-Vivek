@@ -1,0 +1,206 @@
+/* ═══════════════════════════════════════════════════════════════
+   AnalysisLoader — Neo-Brutalist Styles
+   ═══════════════════════════════════════════════════════════════ */
+
+.section {
+  padding: 4rem 2rem;
+  background-color: var(--bg-primary);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ── Brain Animation ───────────────────────────────────────── */
+.brainWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  margin-bottom: 2rem;
+}
+
+.brainOrb {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  background: var(--accent-primary);
+  border: 3px solid var(--neutral-black);
+  transform: rotate(8deg);
+  box-shadow: 4px 4px 0px 0px var(--neutral-black);
+  animation: float 2.5s ease-in-out infinite;
+}
+
+.brainEmoji {
+  position: relative;
+  font-size: 3rem;
+  z-index: 2;
+  animation: float 2.5s ease-in-out infinite;
+}
+
+/* ── Title ─────────────────────────────────────────────────── */
+.title {
+  font-size: 2.25rem;
+  font-weight: 900;
+  margin-bottom: 0.75rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 3.5rem;
+}
+
+/* ── Stages ────────────────────────────────────────────────── */
+.stages {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  text-align: left;
+}
+
+.stageCard {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.5rem 1.75rem;
+  background: var(--bg-card);
+  border: var(--border-width) solid var(--neutral-black);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-brutalist);
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+.stageCard.active {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0px 0px var(--neutral-black);
+  background-color: #e9ddff; /* very light purple for active step */
+}
+
+.stageCard.complete {
+  background-color: #f4f4f5;
+  border-color: #3f3f46;
+  opacity: 0.85;
+}
+
+.stageCard.pending {
+  background-color: var(--bg-primary);
+  border-color: #a1a1aa;
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+/* ── Status Dot ────────────────────────────────────────────── */
+.statusDot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--neutral-black);
+  background: white;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--neutral-black);
+  font-weight: 900;
+}
+
+.active .statusDot {
+  background: var(--accent-primary);
+}
+
+.complete .statusDot {
+  background: var(--accent-success);
+  color: white;
+}
+
+.pulsingDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--neutral-black);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+/* ── Stage Content ─────────────────────────────────────────── */
+.stageContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stageRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.parallelRow {
+  padding-top: 0.75rem;
+  border-top: 3px solid var(--neutral-black);
+  position: relative;
+}
+
+.stageIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.stageLabel {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--neutral-black);
+}
+
+.stageSublabel {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.parallelBadge {
+  position: absolute;
+  right: 0;
+  top: 0.85rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  background: var(--accent-info);
+  color: white;
+  border: 2px solid var(--neutral-black);
+  border-radius: var(--radius-full);
+  box-shadow: 2px 2px 0px 0px var(--neutral-black);
+}
+
+/* ── Progress Bar ──────────────────────────────────────────── */
+.progressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--neutral-black);
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent-primary);
+  animation: progressGrow 5s ease-out forwards;
+}
+
+@keyframes progressGrow {
+  from { width: 5%; }
+  to { width: 95%; }
+}
