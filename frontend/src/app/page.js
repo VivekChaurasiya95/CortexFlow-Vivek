@@ -1,66 +1,82 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import HeroInput from './components/HeroInput';
-import GuidedQuestions from './components/GuidedQuestions';
-import AnalysisLoader from './components/AnalysisLoader';
-import ResultsDisplay from './components/ResultsDisplay';
+import { useState, useEffect } from "react";
+import HeroInput from "./components/HeroInput";
+import GuidedQuestions from "./components/GuidedQuestions";
+import AnalysisLoader from "./components/AnalysisLoader";
+import ResultsDisplay from "./components/ResultsDisplay";
+
+const parseJsonResponse = async (response) => {
+  const text = await response.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { error: text };
+  }
+};
 
 export default function Home() {
-  const [step, setStep] = useState('input'); // 'input', 'questions', 'loading', 'results'
-  const [idea, setIdea] = useState('');
-  const [sessionId, setSessionId] = useState('');
+  const [step, setStep] = useState("input"); // 'input', 'questions', 'loading', 'results'
+  const [idea, setIdea] = useState("");
+  const [sessionId, setSessionId] = useState("");
   const [questions, setQuestions] = useState([]);
-  const [currentStage, setCurrentStage] = useState('research_risk');
+  const [currentStage, setCurrentStage] = useState("research_risk");
   const [results, setResults] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasPreviousSession, setHasPreviousSession] = useState(null);
 
   useEffect(() => {
-    const savedSession = localStorage.getItem('cortexflow_session');
+    const savedSession = localStorage.getItem("cortexflow_session");
     if (savedSession) {
       setHasPreviousSession(savedSession);
     }
   }, []);
 
   // API base URL - use same-origin by default (proxy via Next rewrites)
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "";
 
   // Step 1: Submit idea, get initial questions
   const handleIdeaSubmit = async (submittedIdea, file = null) => {
     setIdea(submittedIdea);
     setIsSubmitting(true);
-    setError('');
+    setError("");
 
     try {
       const payload = { idea: submittedIdea };
-      
-      // If there's a file, we could handle it via FormData, 
+
+      // If there's a file, we could handle it via FormData,
       // but keeping it simple for now or adjusting depending on backend support.
       // E.g., const formData = new FormData();
       // formData.append('idea', submittedIdea);
       // if (file) formData.append('file', file);
-      
+
       const response = await fetch(`${API_BASE}/api/analyze`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
+      const data = await parseJsonResponse(response);
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.error || 'Failed to submit idea');
+        throw new Error(
+          data?.error || `Failed to submit idea (${response.status})`,
+        );
       }
-
-      const data = await response.json();
+      if (!data) {
+        throw new Error("Empty response from API. Is the backend running?");
+      }
       setSessionId(data.sessionId);
-      localStorage.setItem('cortexflow_session', data.sessionId);
+      localStorage.setItem("cortexflow_session", data.sessionId);
       setQuestions(data.questions || []);
-      setStep('questions');
+      setStep("questions");
     } catch (err) {
-      console.error('Error submitting idea:', err);
-      setError(err.message || 'Connecting to CortexFlow API failed. Make sure the backend is running!');
+      console.error("Error submitting idea:", err);
+      setError(
+        err.message ||
+          "Connecting to CortexFlow API failed. Make sure the backend is running!",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -68,48 +84,55 @@ export default function Home() {
 
   // Run the full pipeline with given answers
   const runAnalysis = async (answers = {}) => {
-    setStep('loading');
-    setCurrentStage('research_risk');
-    setError('');
+    setStep("loading");
+    setCurrentStage("research_risk");
+    setError("");
 
     // Fetch the analysis in parallel
     const analysisPromise = fetch(`${API_BASE}/api/analyze/run`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         idea,
         answers,
-        sessionId
-      })
+        sessionId,
+      }),
     }).then(async (res) => {
+      const data = await parseJsonResponse(res);
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || 'Analysis pipeline failed');
+        throw new Error(
+          data?.error || `Analysis pipeline failed (${res.status})`,
+        );
       }
-      return res.json();
+      if (!data) {
+        throw new Error("Empty response from API. Is the backend running?");
+      }
+      return data;
     });
 
     // Simulate beautiful progressive stage transitions for the UI
     try {
       // Stage 1: Research & Risk (2.2s)
-      await new Promise(resolve => setTimeout(resolve, 2200));
-      setCurrentStage('market');
+      await new Promise((resolve) => setTimeout(resolve, 2200));
+      setCurrentStage("market");
 
       // Stage 2: Market Opportunities (2.2s)
-      await new Promise(resolve => setTimeout(resolve, 2200));
-      setCurrentStage('strategy');
+      await new Promise((resolve) => setTimeout(resolve, 2200));
+      setCurrentStage("strategy");
 
       // Stage 3: Strategy & Roadmap (2.2s)
-      await new Promise(resolve => setTimeout(resolve, 2200));
+      await new Promise((resolve) => setTimeout(resolve, 2200));
 
       // Wait for real API promise to resolve
       const data = await analysisPromise;
       setResults(data);
-      setStep('results');
+      setStep("results");
     } catch (err) {
-      console.error('Error running analysis:', err);
-      setError(err.message || 'An error occurred during analysis. Please try again.');
-      setStep('input');
+      console.error("Error running analysis:", err);
+      setError(
+        err.message || "An error occurred during analysis. Please try again.",
+      );
+      setStep("input");
     }
   };
 
@@ -122,38 +145,43 @@ export default function Home() {
   };
 
   const handleNewAnalysis = () => {
-    setStep('input');
-    setIdea('');
-    setSessionId('');
+    setStep("input");
+    setIdea("");
+    setSessionId("");
     setQuestions([]);
     setResults(null);
-    setError('');
-    localStorage.removeItem('cortexflow_session');
+    setError("");
+    localStorage.removeItem("cortexflow_session");
     setHasPreviousSession(null);
   };
 
   const handleRefineIdea = () => {
-    setStep('input');
+    setStep("input");
     setResults(null);
-    setError('');
+    setError("");
   };
 
   const handleResumeSession = async () => {
     if (!hasPreviousSession) return;
     setIsSubmitting(true);
-    setError('');
+    setError("");
     try {
-      const response = await fetch(`${API_BASE}/api/session/${hasPreviousSession}`);
-      if (!response.ok) throw new Error('Session expired or not found');
-      const data = await response.json();
+      const response = await fetch(
+        `${API_BASE}/api/session/${hasPreviousSession}`,
+      );
+      const data = await parseJsonResponse(response);
+      if (!response.ok)
+        throw new Error(data?.error || "Session expired or not found");
+      if (!data)
+        throw new Error("Empty response from API. Is the backend running?");
       setIdea(data.context.idea);
       setSessionId(hasPreviousSession);
       setResults(data.result);
-      setStep('results');
+      setStep("results");
     } catch (err) {
       console.error(err);
-      setError('Could not load previous session.');
-      localStorage.removeItem('cortexflow_session');
+      setError("Could not load previous session.");
+      localStorage.removeItem("cortexflow_session");
       setHasPreviousSession(null);
     } finally {
       setIsSubmitting(false);
@@ -161,68 +189,84 @@ export default function Home() {
   };
 
   return (
-    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <main
+      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+    >
       {/* Premium header rail */}
-      <header style={{
-        padding: '1.25rem 2rem',
-        background: '#ffffff',
-        borderBottom: '4px solid #000000',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        zIndex: 10
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{
-            fontSize: '1.5rem',
-            padding: '4px 10px',
-            background: '#facc15',
-            border: '3px solid #000000',
-            fontWeight: '900',
-            transform: 'rotate(-2deg)',
-            boxShadow: '3px 3px 0px 0px #000000'
-          }}>🧠</span>
-          <span style={{
-            fontFamily: 'Anybody',
-            fontSize: '1.5rem',
-            fontWeight: '900',
-            letterSpacing: '-0.02em',
-            color: '#000000'
-          }}>CortexFlow</span>
+      <header
+        style={{
+          padding: "1.25rem 2rem",
+          background: "#ffffff",
+          borderBottom: "4px solid #000000",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          zIndex: 10,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <span
+            style={{
+              fontSize: "1.5rem",
+              padding: "4px 10px",
+              background: "#facc15",
+              border: "3px solid #000000",
+              fontWeight: "900",
+              transform: "rotate(-2deg)",
+              boxShadow: "3px 3px 0px 0px #000000",
+            }}
+          >
+            🧠
+          </span>
+          <span
+            style={{
+              fontFamily: "Anybody",
+              fontSize: "1.5rem",
+              fontWeight: "900",
+              letterSpacing: "-0.02em",
+              color: "#000000",
+            }}
+          >
+            CortexFlow
+          </span>
         </div>
-        <div style={{
-          fontFamily: 'Space Grotesk',
-          fontSize: '0.85rem',
-          fontWeight: '700',
-          padding: '6px 14px',
-          background: '#8b5cf6',
-          color: 'white',
-          border: '3px solid #000000',
-          borderRadius: '9999px',
-          boxShadow: '2px 2px 0px 0px #000000'
-        }}>
+        <div
+          style={{
+            fontFamily: "Space Grotesk",
+            fontSize: "0.85rem",
+            fontWeight: "700",
+            padding: "6px 14px",
+            background: "#8b5cf6",
+            color: "white",
+            border: "3px solid #000000",
+            borderRadius: "9999px",
+            boxShadow: "2px 2px 0px 0px #000000",
+          }}
+        >
           MVP Orchestrator v1.0
         </div>
       </header>
 
       {/* Error Banner */}
       {error && (
-        <div style={{
-          margin: '2rem auto 0',
-          maxWidth: '800px',
-          width: 'calc(100% - 4rem)',
-          background: '#f87171',
-          border: '4px solid #000000',
-          borderRadius: '16px',
-          padding: '1rem 1.5rem',
-          boxShadow: '4px 4px 0px 0px #000000',
-          fontFamily: 'Space Grotesk',
-          fontWeight: '700',
-          color: '#000000',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px'
-        }}>
+        <div
+          style={{
+            margin: "2rem auto 0",
+            maxWidth: "800px",
+            width: "calc(100% - 4rem)",
+            background: "#f87171",
+            border: "4px solid #000000",
+            borderRadius: "16px",
+            padding: "1rem 1.5rem",
+            boxShadow: "4px 4px 0px 0px #000000",
+            fontFamily: "Space Grotesk",
+            fontWeight: "700",
+            color: "#000000",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+          }}
+        >
           <span>⚠️</span>
           <span>{error}</span>
         </div>
@@ -230,22 +274,32 @@ export default function Home() {
 
       {/* Active step display */}
       <div style={{ flex: 1 }}>
-        {step === 'input' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <HeroInput onSubmit={handleIdeaSubmit} isLoading={isSubmitting} initialValue={idea} />
+        {step === "input" && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <HeroInput
+              onSubmit={handleIdeaSubmit}
+              isLoading={isSubmitting}
+              initialValue={idea}
+            />
             {hasPreviousSession && !isSubmitting && (
-              <button 
+              <button
                 onClick={handleResumeSession}
                 style={{
-                  marginTop: '-40px',
-                  marginBottom: '40px',
-                  padding: '10px 20px',
-                  background: 'transparent',
-                  border: '2px dashed #000',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontFamily: 'Space Grotesk',
-                  fontWeight: '600'
+                  marginTop: "-40px",
+                  marginBottom: "40px",
+                  padding: "10px 20px",
+                  background: "transparent",
+                  border: "2px dashed #000",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  fontFamily: "Space Grotesk",
+                  fontWeight: "600",
                 }}
               >
                 Resume Previous Session
@@ -254,7 +308,7 @@ export default function Home() {
           </div>
         )}
 
-        {step === 'questions' && (
+        {step === "questions" && (
           <GuidedQuestions
             questions={questions}
             onSubmit={handleQuestionsSubmit}
@@ -263,14 +317,12 @@ export default function Home() {
           />
         )}
 
-        {step === 'loading' && (
-          <AnalysisLoader currentStage={currentStage} />
-        )}
+        {step === "loading" && <AnalysisLoader currentStage={currentStage} />}
 
-        {step === 'results' && (
-          <ResultsDisplay 
-            results={results} 
-            onNewAnalysis={handleNewAnalysis} 
+        {step === "results" && (
+          <ResultsDisplay
+            results={results}
+            onNewAnalysis={handleNewAnalysis}
             onRefineIdea={handleRefineIdea}
             sessionId={sessionId}
             apiBase={API_BASE}
@@ -279,16 +331,19 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer style={{
-        padding: '2rem',
-        background: '#ffffff',
-        borderTop: '4px solid #000000',
-        textAlign: 'center',
-        fontFamily: 'Space Grotesk',
-        fontSize: '0.9rem',
-        fontWeight: '700'
-      }}>
-        CortexFlow Strategy Interface • Built with ⚡ in Neo-Brutalist Play style
+      <footer
+        style={{
+          padding: "2rem",
+          background: "#ffffff",
+          borderTop: "4px solid #000000",
+          textAlign: "center",
+          fontFamily: "Space Grotesk",
+          fontSize: "0.9rem",
+          fontWeight: "700",
+        }}
+      >
+        CortexFlow Strategy Interface • Built with ⚡ in Neo-Brutalist Play
+        style
       </footer>
     </main>
   );
