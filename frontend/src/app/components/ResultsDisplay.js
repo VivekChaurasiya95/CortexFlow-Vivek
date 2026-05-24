@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import styles from './ResultsDisplay.module.css';
+import ResultsCharts from './ResultsCharts';
 
 const SECTION_CONFIG = {
   research: {
@@ -274,6 +275,9 @@ export default function ResultsDisplay({ results, onNewAnalysis, onRefineIdea, s
 
         {/* Sources */}
         <SourcesList sources={results.sources} />
+
+        {/* Data Visualizations */}
+        <ResultsCharts results={results} />
 
         {/* Meta Toggle */}
         <div className={styles.metaToggle}>

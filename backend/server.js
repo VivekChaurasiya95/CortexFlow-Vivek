@@ -11,6 +11,7 @@ const rag = require('./rag');
 const contextBuilder = require('./contextBuilder');
 const orchestrator = require('./orchestrator');
 const cache = require('./cache');
+const database = require('./database');
 const agents = require('./agents');
 const { searchWeb } = require('./search');
 
@@ -31,6 +32,9 @@ async function initialize() {
 
   // Initialize cache (Redis with fallback)
   await cache.initialize();
+
+  // Initialize database (PostgreSQL persistence)
+  await database.initialize();
 
   console.log('\n✅ All systems initialized\n');
 }
@@ -55,7 +59,7 @@ app.post('/api/analyze', async (req, res) => {
     const sessionId = uuidv4();
 
     // Get initial RAG results for context-aware questions
-    const retrieved = rag.retrieve(idea, 5);
+    const retrieved = await rag.retrieve(idea, 5);
 
     // Generate follow-up questions
     const questions = contextBuilder.generateQuestions(idea);
@@ -118,6 +122,9 @@ app.post('/api/analyze/run', async (req, res) => {
 
     // Store final result in session for resume and refinement
     await cache.setSession(sessionId, {
+      idea,
+      answers,
+      retrieved,
       context,
       result
     });
@@ -177,9 +184,30 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     cache: cache.getStats(),
+    database: database.getStatus(),
     ewmaLatency: orchestrator.getEWMALatency(),
     timestamp: new Date().toISOString()
   });
+});
+
+/**
+ * GET /api/admin/sessions
+ * List recent sessions (admin/debug).
+ */
+app.get('/api/admin/sessions', async (req, res) => {
+  try {
+    if (!database.getStatus().connected) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
+
+    const limit = Number.parseInt(req.query.limit, 10);
+    const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.min(limit, 200) : 50;
+    const sessions = await database.getAllSessions(safeLimit);
+    res.json({ sessions });
+  } catch (error) {
+    console.error('[Server] /api/admin/sessions error:', error);
+    res.status(500).json({ error: 'Failed to retrieve sessions' });
+  }
 });
 
 // ─── START SERVER ──────────────────────────────────────────────────

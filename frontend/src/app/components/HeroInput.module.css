@@ -169,6 +169,84 @@
   border-top: 3px solid var(--neutral-black);
 }
 
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.attachBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--neutral-black);
+  border-radius: var(--radius-md);
+  color: var(--neutral-black);
+  cursor: pointer;
+  box-shadow: 2px 2px 0px 0px var(--neutral-black);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.attachBtn:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px 0px var(--neutral-black);
+  background-color: var(--accent-info);
+  color: white;
+}
+
+.attachBtn:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px 0px var(--neutral-black);
+}
+
+.attachBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.filePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1rem;
+  padding: 6px 12px;
+  background-color: var(--accent-tertiary);
+  border: 2px solid var(--neutral-black);
+  border-radius: var(--radius-md);
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 2px 2px 0px 0px var(--neutral-black);
+}
+
+.fileName {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileRemoveBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 2px;
+  opacity: 0.8;
+  transition: opacity var(--transition-fast);
+}
+
+.fileRemoveBtn:hover {
+  opacity: 1;
+}
+
 .charCount {
   font-size: 0.9rem;
   color: var(--text-muted);

@@ -1,5 +1,5 @@
 // CortexFlow — RAG Module
-// In-memory vector storage with cosine similarity retrieval
+// In-memory vector storage with cosine similarity retrieval using Gemini Embeddings
 
 const fs = require('fs');
 const path = require('path');
@@ -11,10 +11,51 @@ class RAG {
     this.isInitialized = false;
   }
 
+  async _getGeminiEmbedding(text) {
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBtrDLQzDwJKkw2XdBNy7SJxsyAGdl8Yzo';
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'models/text-embedding-004',
+          content: { parts: [{ text }] }
+        })
+      });
+      if (!response.ok) throw new Error(response.statusText);
+      const data = await response.json();
+      return data.embedding.values;
+    } catch (err) {
+      console.error("[RAG] Gemini Embedding error", err);
+      return [];
+    }
+  }
+
+  async _getGeminiBatchEmbeddings(texts) {
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBtrDLQzDwJKkw2XdBNy7SJxsyAGdl8Yzo';
+    try {
+      const requests = texts.map(text => ({
+        model: 'models/text-embedding-004',
+        content: { parts: [{ text }] }
+      }));
+      
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:batchEmbedContents?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requests })
+      });
+      
+      if (!response.ok) throw new Error(response.statusText);
+      const data = await response.json();
+      return data.embeddings.map(e => e.values);
+    } catch (err) {
+      console.error("[RAG] Gemini Batch Embedding error", err);
+      return Array(texts.length).fill([]);
+    }
+  }
+
   /**
-   * Load dataset and compute simple TF-IDF-like vectors for each entry.
-   * For MVP, we use term frequency vectors instead of external embedding APIs
-   * to keep things fast and dependency-free.
+   * Load dataset and compute embeddings using Gemini text-embedding-004
    */
   async initialize() {
     if (this.isInitialized) return;
@@ -23,25 +64,40 @@ class RAG {
     const raw = fs.readFileSync(dataPath, 'utf-8');
     this.documents = JSON.parse(raw);
 
-    // Build vocabulary from all documents
-    this.vocabulary = this._buildVocabulary(this.documents);
-
-    // Compute vectors for each document
-    this.vectors = this.documents.map(doc => ({
-      id: doc.id,
-      vector: this._textToVector(this._documentToText(doc)),
-      document: doc
-    }));
+    const texts = this.documents.map(doc => this._documentToText(doc));
+    
+    // Process in batches of 100 to respect Gemini limits
+    this.vectors = [];
+    const BATCH_SIZE = 100;
+    
+    for (let i = 0; i < texts.length; i += BATCH_SIZE) {
+      const batchTexts = texts.slice(i, i + BATCH_SIZE);
+      const batchEmbeddings = await this._getGeminiBatchEmbeddings(batchTexts);
+      
+      for (let j = 0; j < batchEmbeddings.length; j++) {
+        if (batchEmbeddings[j] && batchEmbeddings[j].length > 0) {
+          this.vectors.push({
+            id: this.documents[i + j].id,
+            vector: batchEmbeddings[j],
+            document: this.documents[i + j]
+          });
+        }
+      }
+    }
 
     this.isInitialized = true;
-    console.log(`[RAG] Initialized with ${this.documents.length} documents, vocabulary size: ${this.vocabulary.length}`);
+    console.log(`[RAG] Initialized with ${this.vectors.length} documents using Gemini embeddings`);
   }
 
   /**
    * Retrieve top-k most relevant documents for a given query.
    */
-  retrieve(query, topK = 5) {
-    const queryVector = this._textToVector(query.toLowerCase());
+  async retrieve(query, topK = 5) {
+    const queryVector = await this._getGeminiEmbedding(query.toLowerCase());
+    
+    if (!queryVector || queryVector.length === 0) {
+      return [];
+    }
 
     const scored = this.vectors.map(item => ({
       score: this._cosineSimilarity(queryVector, item.vector),
@@ -66,50 +122,6 @@ class RAG {
       doc.source_type,
       doc.notes || ''
     ].join(' ').toLowerCase();
-  }
-
-  /**
-   * Build vocabulary from all documents.
-   */
-  _buildVocabulary(documents) {
-    const wordSet = new Set();
-    documents.forEach(doc => {
-      const text = this._documentToText(doc);
-      this._tokenize(text).forEach(word => wordSet.add(word));
-    });
-    return Array.from(wordSet);
-  }
-
-  /**
-   * Tokenize text into words, removing stopwords.
-   */
-  _tokenize(text) {
-    const stopwords = new Set([
-      'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      'of', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'be', 'been',
-      'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
-      'could', 'should', 'may', 'might', 'can', 'shall', 'not', 'no', 'nor',
-      'it', 'its', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she',
-      'we', 'they', 'me', 'him', 'her', 'us', 'them', 'my', 'your', 'his',
-      'our', 'their', 'what', 'which', 'who', 'whom', 'than', 'more', 'most',
-      'as', 'if', 'then', 'so', 'also', 'just', 'about', 'up', 'out', 'into'
-    ]);
-
-    return text
-      .replace(/[^a-z0-9\s-]/g, '')
-      .split(/\s+/)
-      .filter(w => w.length > 2 && !stopwords.has(w));
-  }
-
-  /**
-   * Convert text to a term-frequency vector.
-   */
-  _textToVector(text) {
-    const tokens = this._tokenize(text);
-    const freq = {};
-    tokens.forEach(t => { freq[t] = (freq[t] || 0) + 1; });
-
-    return this.vocabulary.map(word => freq[word] || 0);
   }
 
   /**

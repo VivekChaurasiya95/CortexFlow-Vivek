@@ -2,6 +2,14 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Create a local env file for the API base if needed:
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` to point `NEXT_PUBLIC_API_BASE` at your backend (default is `http://localhost:3001`).
+
 First, run the development server:
 
 ```bash

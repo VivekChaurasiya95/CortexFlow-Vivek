@@ -294,6 +294,98 @@
   font-size: 0.8rem;
 }
 
+/* ── Charts ────────────────────────────────────────────────── */
+.chartsSection {
+  margin: 2.5rem 0 3rem;
+}
+
+.chartsHeader {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.chartsTitle {
+  font-family: 'Anybody', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--neutral-black);
+  margin-bottom: 0.35rem;
+}
+
+.chartsSubtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.chartCard {
+  background: var(--bg-card);
+  border: var(--border-width) solid var(--neutral-black);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem 1.5rem;
+  box-shadow: var(--shadow-brutalist);
+}
+
+.chartCardHeader {
+  margin-bottom: 0.75rem;
+}
+
+.chartTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--neutral-black);
+}
+
+.chartSubtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.chartWrap {
+  width: 100%;
+  height: 230px;
+}
+
+.chartEmpty {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px dashed var(--neutral-black);
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--neutral-black);
+}
+
+.chartCard :global(.recharts-default-tooltip) {
+  background: #ffffff !important;
+  border: 3px solid var(--neutral-black) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--shadow-brutalist) !important;
+}
+
+.chartCard :global(.recharts-tooltip-label) {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  color: var(--neutral-black);
+}
+
+.chartCard :global(.recharts-legend-item-text) {
+  color: var(--neutral-black) !important;
+}
+
 /* ── Meta Toggle ───────────────────────────────────────────── */
 .metaToggle {
   text-align: center;
@@ -422,5 +514,9 @@
 
   .metaGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chartWrap {
+    height: 200px;
   }
 }

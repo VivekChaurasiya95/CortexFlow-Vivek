@@ -24,20 +24,28 @@ export default function Home() {
     }
   }, []);
 
-  // API base URL - CortexFlow Express server is on port 3001
-  const API_BASE = 'http://localhost:3001';
+  // API base URL - use same-origin by default (proxy via Next rewrites)
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
 
   // Step 1: Submit idea, get initial questions
-  const handleIdeaSubmit = async (submittedIdea) => {
+  const handleIdeaSubmit = async (submittedIdea, file = null) => {
     setIdea(submittedIdea);
     setIsSubmitting(true);
     setError('');
 
     try {
+      const payload = { idea: submittedIdea };
+      
+      // If there's a file, we could handle it via FormData, 
+      // but keeping it simple for now or adjusting depending on backend support.
+      // E.g., const formData = new FormData();
+      // formData.append('idea', submittedIdea);
+      // if (file) formData.append('file', file);
+      
       const response = await fetch(`${API_BASE}/api/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idea: submittedIdea })
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
