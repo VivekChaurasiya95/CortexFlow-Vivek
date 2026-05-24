@@ -2,19 +2,6 @@
 // Four role-specialized agents: Research, Risk, Market, Strategy
 // Self-healing: automatically falls back to highly realistic custom mock generation if API key is invalid/missing
 
-const OpenAI = require('openai');
-
-let openai;
-
-function getClient() {
-  if (!openai) {
-    openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY || 'mock-key'
-    });
-  }
-  return openai;
-}
-
 /**
  * Generates highly realistic, custom-tailored mock responses if the real LLM fails or is unconfigured.
  */
@@ -108,27 +95,36 @@ Launch directly on Product Hunt and target freelance subreddits/indie-hacker com
  * Returns structured text output.
  */
 async function callLLM(systemPrompt, userMessage) {
-  // If the API key is missing or is the default placeholder, fallback immediately to mock
-  if (!process.env.OPENAI_API_KEY || 
-      process.env.OPENAI_API_KEY.trim() === '' || 
-      process.env.OPENAI_API_KEY.includes('your_openai_api_key_here')) {
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBtrDLQzDwJKkw2XdBNy7SJxsyAGdl8Yzo';
+
+  if (!GEMINI_API_KEY || GEMINI_API_KEY === 'mock-key') {
     return generateMockResponse(systemPrompt, userMessage);
   }
 
-  const client = getClient();
-
   try {
-    const response = await client.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessage }
-      ],
-      temperature: 0.7,
-      max_tokens: 1000
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        system_instruction: { parts: { text: systemPrompt } },
+        contents: [
+          { role: 'user', parts: [{ text: userMessage }] }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1000
+        }
+      })
     });
 
-    return response.choices[0].message.content;
+    if (!response.ok) {
+      throw new Error(`API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.candidates[0].content.parts[0].text;
   } catch (error) {
     console.warn(`[Agent] Real LLM call failed (${error.message}). Falling back to custom-tailored Mock generation.`);
     return generateMockResponse(systemPrompt, userMessage);
