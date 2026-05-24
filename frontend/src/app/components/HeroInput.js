@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './HeroInput.module.css';
 
 const EXAMPLE_IDEAS = [
@@ -10,14 +10,20 @@ const EXAMPLE_IDEAS = [
   "A platform for indie game developers to find playtesters",
 ];
 
-export default function HeroInput({ onSubmit, isLoading }) {
-  const [idea, setIdea] = useState('');
-  const [charCount, setCharCount] = useState(0);
+export default function HeroInput({ onSubmit, isLoading, initialValue = '' }) {
+  const [idea, setIdea] = useState(initialValue);
+  const [charCount, setCharCount] = useState(initialValue.length);
+
+  useEffect(() => {
+    setIdea(initialValue);
+    setCharCount(initialValue.length);
+  }, [initialValue]);
 
   const handleChange = (e) => {
     setIdea(e.target.value);
     setCharCount(e.target.value.length);
   };
+
 
   const handleSubmit = () => {
     if (idea.trim().length >= 10) {

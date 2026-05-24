@@ -96,6 +96,10 @@ Build a sleek, high-impact web editor optimized for solo freelancers. The platfo
 Launch directly on Product Hunt and target freelance subreddits/indie-hacker communities. Offer a free trial with 3 custom proposals, followed by a flat $14/month subscription. Acquire early users through interactive free web tools like "Upwork Pitch Improver."`;
   }
 
+  if (systemPrompt.includes('refinement expert')) {
+    return `That's a great question. Based on the current strategy, adapting for that direction would mean shifting the focus from individual creatives to larger agency teams. You would want to introduce role-based permissions early in Phase 2 and integrate directly with Enterprise CRMs like Salesforce. Pricing should move from a flat monthly fee to a per-seat model starting at $49/user.`;
+  }
+
   return "Mock analysis content placeholder.";
 }
 
@@ -181,6 +185,15 @@ function formatContext(context) {
     text += '\n';
   }
 
+  if (context.live_web_data && context.live_web_data.length > 0) {
+    text += `## Real-Time Web Data (Live Search Results)\n`;
+    context.live_web_data.forEach(r => {
+      text += `- **${r.title}**: ${r.snippet}\n`;
+      if (r.url) text += `  Source: ${r.url}\n`;
+    });
+    text += '\n';
+  }
+
   return text;
 }
 
@@ -189,7 +202,8 @@ function formatContext(context) {
 const RESEARCH_PROMPT = `You are a research analyst at a product intelligence firm. Your job is to analyze an idea and find similar products, patterns, and relevant references.
 
 Rules:
-- Use ONLY the provided context to inform your analysis.
+- PRIORITIZE the Real-Time Web Data section — it contains current, live search results.
+- Cross-reference live data with the provided context for deeper insights.
 - Return concise, actionable bullet points.
 - Group findings into: Similar Products, Relevant Patterns, Key References.
 - Be specific — name products, companies, or trends when possible.
@@ -224,6 +238,7 @@ async function riskAgent(context) {
 const MARKET_PROMPT = `You are a market analyst. Your job is to identify market gaps, opportunities, and demand signals based on research findings.
 
 Rules:
+- PRIORITIZE the Real-Time Web Data — it reflects the current competitive landscape.
 - Use the research summary AND the original context.
 - Return concise bullet points.
 - Group findings into: Market Gaps, Demand Signals, Competitive Advantages.
@@ -270,9 +285,30 @@ Timeline: ${context.timeline}`;
   return await callLLM(STRATEGY_PROMPT, userMessage);
 }
 
+// ─── REFINEMENT AGENT ──────────────────────────────────────────────
+
+const REFINEMENT_PROMPT = `You are a product refinement expert. The user is asking a follow-up question about their product strategy.
+
+Rules:
+- Keep the answer concise and highly relevant to the provided context and strategy.
+- Keep it under 200 words.
+- Format output as clean markdown.`;
+
+async function refinementAgent(pipelineResult, context, question) {
+  const userMessage = `Here is the current strategy:
+## Strategy
+${pipelineResult.strategy}
+
+## Question
+${question}`;
+  
+  return await callLLM(REFINEMENT_PROMPT, userMessage);
+}
+
 module.exports = {
   researchAgent,
   riskAgent,
   marketAgent,
-  strategyAgent
+  strategyAgent,
+  refinementAgent
 };
