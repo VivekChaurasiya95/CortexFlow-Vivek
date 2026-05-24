@@ -3,6 +3,9 @@
 
 const { researchAgent, riskAgent, marketAgent, strategyAgent } = require('./agents');
 const cache = require('./cache');
+const EWMATracker = require('./ewma');
+
+const pipelineLatencyTracker = new EWMATracker(0.2);
 
 class Orchestrator {
   /**
@@ -112,6 +115,9 @@ class Orchestrator {
       cached: !!cachedStrategy
     });
 
+    const totalDuration = Date.now() - log.startTime;
+    const currentEWMA = pipelineLatencyTracker.update(totalDuration);
+
     // ── Combine Results ────────────────────────────────────────
     const result = {
       research,
@@ -124,7 +130,8 @@ class Orchestrator {
         relevance: c.score
       })),
       meta: {
-        totalDuration: Date.now() - log.startTime,
+        totalDuration,
+        ewmaLatency: currentEWMA,
         stages: log.stages,
         cacheHits: log.cacheHits,
         cacheStats: cache.getStats()
@@ -158,6 +165,13 @@ class Orchestrator {
       console.log(`    - ${s.name}: ${s.duration}ms ${s.cached ? '(cached)' : ''}`);
     });
     console.log('══════════════════════════════════════════════\n');
+  }
+
+  /**
+   * Get the current EWMA latency for health checks
+   */
+  getEWMALatency() {
+    return pipelineLatencyTracker.get();
   }
 }
 

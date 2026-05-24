@@ -10,7 +10,7 @@ class ContextBuilder {
    * @param {Array} retrievedChunks - RAG results with { score, document }
    * @returns {object} Structured context for agents
    */
-  build(idea, answers = {}, retrievedChunks = []) {
+  build(idea, answers = {}, retrievedChunks = [], liveWebResults = []) {
     // Categorize retrieved chunks
     const similarProducts = [];
     const painPoints = [];
@@ -70,6 +70,11 @@ class ContextBuilder {
         problems: c.document.problems,
         notes: c.document.notes,
         score: Math.round(c.score * 100) / 100
+      })),
+      live_web_data: liveWebResults.map(r => ({
+        title: r.title,
+        snippet: r.snippet,
+        url: r.url
       }))
     };
   }

@@ -11,6 +11,8 @@ const rag = require('./rag');
 const contextBuilder = require('./contextBuilder');
 const orchestrator = require('./orchestrator');
 const cache = require('./cache');
+const agents = require('./agents');
+const { searchWeb } = require('./search');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -91,14 +93,20 @@ app.post('/api/analyze/run', async (req, res) => {
       });
     }
 
-    // Retrieve relevant documents
-    const retrieved = rag.retrieve(
-      `${idea} ${answers.audience || ''} ${answers.problem || ''} ${answers.productType || ''}`,
-      5
-    );
+    // Retrieve relevant documents + live web data in parallel
+    const [retrieved, liveSearch] = await Promise.all([
+      Promise.resolve(rag.retrieve(
+        `${idea} ${answers.audience || ''} ${answers.problem || ''} ${answers.productType || ''}`,
+        5
+      )),
+      searchWeb(idea, answers.audience || '').catch(err => {
+        console.warn('[Server] Live search failed, continuing without:', err.message);
+        return { results: [], searchQueries: [], timestamp: null };
+      })
+    ]);
 
-    // Build structured context
-    const context = contextBuilder.build(idea, answers, retrieved);
+    // Build structured context with live data
+    const context = contextBuilder.build(idea, answers, retrieved, liveSearch.results);
 
     // Run the agent pipeline
     const result = await orchestrator.run(context);
@@ -108,10 +116,56 @@ app.post('/api/analyze/run', async (req, res) => {
       .filter(([_, v]) => v && v.trim())
       .map(([k, v]) => ({ question: k, answer: v }));
 
+    // Store final result in session for resume and refinement
+    await cache.setSession(sessionId, {
+      context,
+      result
+    });
+
     res.json(result);
   } catch (error) {
     console.error('[Server] /api/analyze/run error:', error);
     res.status(500).json({ error: 'Analysis failed. Please try again.' });
+  }
+});
+
+/**
+ * GET /api/session/:id
+ * Retrieve past session state.
+ */
+app.get('/api/session/:id', async (req, res) => {
+  try {
+    const session = await cache.getSession(req.params.id);
+    if (!session || !session.result) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+    res.json(session);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve session' });
+  }
+});
+
+/**
+ * POST /api/analyze/refine
+ * Answer a follow-up question based on the current strategy.
+ */
+app.post('/api/analyze/refine', async (req, res) => {
+  try {
+    const { sessionId, question } = req.body;
+    if (!sessionId || !question) {
+      return res.status(400).json({ error: 'Missing sessionId or question' });
+    }
+
+    const session = await cache.getSession(sessionId);
+    if (!session || !session.result) {
+      return res.status(404).json({ error: 'Session not found or incomplete' });
+    }
+
+    const answer = await agents.refinementAgent(session.result, session.context, question);
+    res.json({ answer });
+  } catch (error) {
+    console.error('[Server] /api/analyze/refine error:', error);
+    res.status(500).json({ error: 'Refinement failed' });
   }
 });
 
@@ -123,6 +177,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     cache: cache.getStats(),
+    ewmaLatency: orchestrator.getEWMALatency(),
     timestamp: new Date().toISOString()
   });
 });

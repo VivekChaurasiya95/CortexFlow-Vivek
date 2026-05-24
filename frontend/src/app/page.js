@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import HeroInput from './components/HeroInput';
 import GuidedQuestions from './components/GuidedQuestions';
 import AnalysisLoader from './components/AnalysisLoader';
@@ -15,6 +15,14 @@ export default function Home() {
   const [results, setResults] = useState(null);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasPreviousSession, setHasPreviousSession] = useState(null);
+
+  useEffect(() => {
+    const savedSession = localStorage.getItem('cortexflow_session');
+    if (savedSession) {
+      setHasPreviousSession(savedSession);
+    }
+  }, []);
 
   // API base URL - CortexFlow Express server is on port 3001
   const API_BASE = 'http://localhost:3001';
@@ -39,6 +47,7 @@ export default function Home() {
 
       const data = await response.json();
       setSessionId(data.sessionId);
+      localStorage.setItem('cortexflow_session', data.sessionId);
       setQuestions(data.questions || []);
       setStep('questions');
     } catch (err) {
@@ -111,6 +120,36 @@ export default function Home() {
     setQuestions([]);
     setResults(null);
     setError('');
+    localStorage.removeItem('cortexflow_session');
+    setHasPreviousSession(null);
+  };
+
+  const handleRefineIdea = () => {
+    setStep('input');
+    setResults(null);
+    setError('');
+  };
+
+  const handleResumeSession = async () => {
+    if (!hasPreviousSession) return;
+    setIsSubmitting(true);
+    setError('');
+    try {
+      const response = await fetch(`${API_BASE}/api/session/${hasPreviousSession}`);
+      if (!response.ok) throw new Error('Session expired or not found');
+      const data = await response.json();
+      setIdea(data.context.idea);
+      setSessionId(hasPreviousSession);
+      setResults(data.result);
+      setStep('results');
+    } catch (err) {
+      console.error(err);
+      setError('Could not load previous session.');
+      localStorage.removeItem('cortexflow_session');
+      setHasPreviousSession(null);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -184,7 +223,27 @@ export default function Home() {
       {/* Active step display */}
       <div style={{ flex: 1 }}>
         {step === 'input' && (
-          <HeroInput onSubmit={handleIdeaSubmit} isLoading={isSubmitting} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <HeroInput onSubmit={handleIdeaSubmit} isLoading={isSubmitting} initialValue={idea} />
+            {hasPreviousSession && !isSubmitting && (
+              <button 
+                onClick={handleResumeSession}
+                style={{
+                  marginTop: '-40px',
+                  marginBottom: '40px',
+                  padding: '10px 20px',
+                  background: 'transparent',
+                  border: '2px dashed #000',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontFamily: 'Space Grotesk',
+                  fontWeight: '600'
+                }}
+              >
+                Resume Previous Session
+              </button>
+            )}
+          </div>
         )}
 
         {step === 'questions' && (
@@ -201,7 +260,13 @@ export default function Home() {
         )}
 
         {step === 'results' && (
-          <ResultsDisplay results={results} onNewAnalysis={handleNewAnalysis} />
+          <ResultsDisplay 
+            results={results} 
+            onNewAnalysis={handleNewAnalysis} 
+            onRefineIdea={handleRefineIdea}
+            sessionId={sessionId}
+            apiBase={API_BASE}
+          />
         )}
       </div>
 
